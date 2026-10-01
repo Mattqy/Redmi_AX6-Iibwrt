@@ -124,13 +124,13 @@ jobs:
         with:
           tag_name: ${{ steps.tag.outputs.release_tag }}
           name: 红米AX6 LibWrt-NSS固件 ${{ steps.tag.outputs.release_tag }}
+          files: ${{ env.RELEASE_DIR }}/*.*
           body: |
             | 项目 | 内容 |
             |---|---|
             | 源码仓库 | LiBwrt/LibWrt |
-            | 分支 | 25.12-nss |
+            | 固件版本 | v25.12.2 |
             | 核心芯片 | Qualcomm IPQ8071A (IPQ807x) |
-            | 设备型号 | Redmi AX6 (大分区) |
+            | 设备型号 | Redmi AX6 (原厂 stock 分区) |
             | NSS 驱动 | 集成 IPQ807x NSS 硬件加速驱动 |
             | 默认 IP | 10.0.0.1 (或根据你的 .config 确定) |
-          files: ${{ steps.findbin.outputs.BIN_DIR }}/*
