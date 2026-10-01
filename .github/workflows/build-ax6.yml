@@ -94,26 +94,41 @@ jobs:
           echo "status=success" >> $GITHUB_OUTPUT
           echo "FILE_DATE=$(date +"%Y%m%d_%H%M")" >> $GITHUB_ENV
 
-      - name: 查找固件路径
-        id: findbin
+      - name: 查找并整理固件文件
+        id: organize
         if: steps.compile.outputs.status == 'success'
         run: |
           BIN_PATH=$(find openwrt/bin/targets -name "*sysupgrade*" | head -1 | xargs dirname 2>/dev/null || echo "")
           [ -z "$BIN_PATH" ] && BIN_PATH=$(find openwrt/bin/targets -type d | tail -1)
-          echo "BIN_DIR=${BIN_PATH}" >> $GITHUB_OUTPUT
-          echo "固件目录: $BIN_PATH" && ls -lh $BIN_PATH/ 2>/dev/null || true
+          
+          # 创建存放独立 Release 文件的目录
+          RELEASE_DIR="$GITHUB_WORKSPACE/release_files"
+          mkdir -p $RELEASE_DIR
+          
+          # 仅提取散装固件包与配置文件
+          cp -f $BIN_PATH/*sysupgrade* $RELEASE_DIR/ 2>/dev/null || true
+          cp -f $BIN_PATH/*factory* $RELEASE_DIR/ 2>/dev/null || true
+          cp -f $BIN_PATH/*initramfs* $RELEASE_DIR/ 2>/dev/null || true
+          cp -f $BIN_PATH/*.buildinfo $RELEASE_DIR/ 2>/dev/null || true
+          cp -f $BIN_PATH/sha256sums $RELEASE_DIR/ 2>/dev/null || true
+          [ -f openwrt/.config ] && cp -f openwrt/.config $RELEASE_DIR/Config_AX6.txt
+          
+          # 设置环境变量供后续 Step 使用
+          echo "RELEASE_DIR=$RELEASE_DIR" >> $GITHUB_ENV
+          echo "BIN_DIR=$BIN_PATH" >> $GITHUB_OUTPUT
+          echo "status=success" >> $GITHUB_OUTPUT
 
       - name: 上传 Artifacts
         uses: actions/upload-artifact@v4
         if: steps.compile.outputs.status == 'success'
         with:
           name: AX6-NSS-stock-${{ env.FILE_DATE }}
-          path: ${{ steps.findbin.outputs.BIN_DIR }}/
+          path: ${{ steps.organize.outputs.BIN_DIR }}/
           retention-days: 7
 
       - name: 生成 Release 标签
         id: tag
-        if: steps.compile.outputs.status == 'success' && github.event.inputs.release == true
+        if: steps.organize.outputs.status == 'success' && github.event.inputs.release == true
         run: |
           echo "release_tag=AX6-NSS-stock-$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
           echo "status=success" >> $GITHUB_OUTPUT
