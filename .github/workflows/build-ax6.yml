@@ -128,7 +128,7 @@ jobs:
 
       - name: 生成 Release 标签
         id: tag
-        if: steps.organize.outputs.status == 'success' && github.event.inputs.release == true
+        if: steps.organize.outputs.status == 'success'
         run: |
           echo "release_tag=AX6-NSS-stock-$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
           echo "status=success" >> $GITHUB_OUTPUT
