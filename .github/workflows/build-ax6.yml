@@ -18,6 +18,7 @@ env:
   CONFIG_FILE: .config
   DIY_SH: diy.sh
   TZ: Asia/Shanghai
+  RELEASE_DIR: ''
   GIT_TERMINAL_PROMPT: 0
 
 jobs:
@@ -122,7 +123,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: steps.compile.outputs.status == 'success'
         with:
-          name: AX6-NSS-stock-${{ env.FILE_DATE }}
+          name: AX6-NSS-stock-firmware
           path: ${{ steps.organize.outputs.BIN_DIR }}/
           retention-days: 7
 
