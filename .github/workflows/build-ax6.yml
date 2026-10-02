@@ -146,7 +146,7 @@ jobs:
             |---|---|
             | 源码仓库 | LiBwrt/LibWrt |
             | 固件版本 | v25.12.2 |
-            | 核心芯片 | Qualcomm IPQ8071A (IPQ807x) |
-            | 设备型号 | Redmi AX6 (原厂 stock 分区) |
+            | 核心芯片 | Qualcomm IPQ8071A |
+            | 设备型号 | Redmi AX6 (stock 大分区) |
             | NSS 驱动 | 集成 IPQ807x NSS 硬件加速驱动 |
-            | 默认 IP | 10.0.0.1 (或根据你的 .config 确定) |
+            | 默认 IP | 10.0.0.1 |
